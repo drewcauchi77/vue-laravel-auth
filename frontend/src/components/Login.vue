@@ -1,5 +1,7 @@
 <template>
   <form @submit.prevent="handleSubmit">
+      <Error v-if="error" :error="error"/>
+      
       <h3>Login</h3>
 
       <div class="form-group">
@@ -13,35 +15,44 @@
       </div>
 
       <button class="btn btn-primary btn-block">Login</button>
+
+      <p class="forgot-password text-right">
+          <router-link to="forgot">Forgot password?</router-link>
+      </p>
   </form>
 </template>
 
 <script>
 import axios from 'axios'
+import Error from './Error'
 
 export default {
     name: 'Login',
     data() {
         return {
             email: '',
-            password: ''
+            password: '',
+            error: ''
         }
+    },
+    components: {
+        Error
     },
     methods: {
         async handleSubmit() {
-            const response = await axios.post('login', {
-                email: this.email,
-                password: this.password
-            })
+            try{
+                const response = await axios.post('login', {
+                    email: this.email,
+                    password: this.password
+                })
 
-            localStorage.setItem('token', response.data.token)
-
-            this.$router.push('/')
+                localStorage.setItem('token', response.data.token)
+                this.$store.dispatch('user', response.data.user)
+                this.$router.push('/')
+            }catch(e){
+                this.error = 'Invalid email/password¬'
+            }
         }
     }
 }
 </script>
-
-<style>
-
-</style>

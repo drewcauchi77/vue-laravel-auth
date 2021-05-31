@@ -24,18 +24,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'Header',
-    props: ['user'],
     methods: {
         handleClick() {
             localStorage.removeItem('token')
+            this.$store.dispatch('user', null)
             this.$router.push('/login')
         }
+    },
+    computed: {
+        ...mapGetters([
+            'user'
+        ])
     }
 }
 </script>
-
-<style>
-
-</style>

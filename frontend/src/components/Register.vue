@@ -1,5 +1,7 @@
 <template>
   <form @submit.prevent="handleSubmit">
+      <Error v-if="error" :error="error"/>
+
       <h3>Sign Up</h3>
 
       <div class="form-group">
@@ -33,7 +35,7 @@
 
 <script>
 import axios from 'axios'
-axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+import Error from './Error'
 
 export default {
     name: 'Register',
@@ -43,25 +45,29 @@ export default {
             last_name: '',
             email: '',
             password: '',
-            password_confirm: ''
+            password_confirm: '',
+            error: ''
         }
+    },
+    components: {
+        Error
     },
     methods: {
         async handleSubmit() {
-            await axios.post('register', {
-                first_name: this.first_name,
-                last_name: this.last_name,
-                email: this.email,
-                password: this.password,
-                password_confirm: this.password_confirm,
-            })
+            try {
+                await axios.post('register', {
+                    first_name: this.first_name,
+                    last_name: this.last_name,
+                    email: this.email,
+                    password: this.password,
+                    password_confirm: this.password_confirm,
+                })
 
-            this.$router.push('/login')
+                this.$router.push('/login')
+            }catch(e){
+                this.error = 'Error occurred, please re-check your data'
+            }
         }
     }
 }
 </script>
-
-<style>
-
-</style>
